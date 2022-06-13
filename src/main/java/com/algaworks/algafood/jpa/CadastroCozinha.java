@@ -39,4 +39,11 @@ public class CadastroCozinha {
 
 	}
 
+	@Transactional
+	public Cozinha atualizar(Cozinha cozinha) {
+
+		return adicionar(cozinha);
+
+	}
+
 }
