@@ -46,4 +46,13 @@ public class CadastroCozinha {
 
 	}
 
+	@Transactional
+	public void deletar(Long id) {
+
+		Cozinha cozinha = buscar(id);
+
+		entityManager.remove(cozinha);
+
+	}
+
 }
