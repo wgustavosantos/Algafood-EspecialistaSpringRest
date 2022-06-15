@@ -26,6 +26,8 @@ public class AdicionarCozinhaMain {
 		System.out.printf("id: %d - Nome: %s\n", cozinha1.getId(), cozinha1.getNome());
 		System.out.printf("id: %d - Nome: %s\n", cozinha2.getId(), cozinha2.getNome());
 		
+		
+		
 	}
 
 }
