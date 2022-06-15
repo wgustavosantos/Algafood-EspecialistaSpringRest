@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.algaworks.algafood.AlgafoodApplication;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.infrastructure.repository.CozinhaRepositoryImpl;
 
 public class AdicionarCozinhaMain {
 
@@ -14,13 +15,13 @@ public class AdicionarCozinhaMain {
 		ApplicationContext applicationContext = new SpringApplicationBuilder(AlgafoodApplication.class)
 				.web(WebApplicationType.NONE).run(args);
 
-		CadastroCozinha cadastroCozinha = applicationContext.getBean(CadastroCozinha.class);
+		CozinhaRepositoryImpl repository = applicationContext.getBean(CozinhaRepositoryImpl.class);
 
 		Cozinha cozinha1 = new Cozinha(null, "Brasileira");
 		Cozinha cozinha2 = new Cozinha(null, "Japonesa");
 		
-		cozinha1 = cadastroCozinha.adicionar(cozinha1);
-		cozinha2 = cadastroCozinha.adicionar(cozinha2);
+		cozinha1 = repository.salvar(cozinha1);
+		cozinha2 = repository.salvar(cozinha2);
 		
 		System.out.printf("id: %d - Nome: %s\n", cozinha1.getId(), cozinha1.getNome());
 		System.out.printf("id: %d - Nome: %s\n", cozinha2.getId(), cozinha2.getNome());

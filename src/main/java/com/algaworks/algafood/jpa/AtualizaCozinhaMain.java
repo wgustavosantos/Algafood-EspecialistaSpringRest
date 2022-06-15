@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.algaworks.algafood.AlgafoodApplication;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.infrastructure.repository.CozinhaRepositoryImpl;
 
 public class AtualizaCozinhaMain {
 
@@ -14,13 +15,12 @@ public class AtualizaCozinhaMain {
 		ApplicationContext applicationContext = new SpringApplicationBuilder(AlgafoodApplication.class)
 				.web(WebApplicationType.NONE).run(args);
 
-		CadastroCozinha cadastroCozinha = applicationContext.getBean(CadastroCozinha.class);
-
-		Cozinha cozinha = cadastroCozinha.buscar(1L);
+		CozinhaRepositoryImpl repository = applicationContext.getBean(CozinhaRepositoryImpl.class);
+		Cozinha cozinha = repository.buscar(1L);
 
 		cozinha.setNome("Indiana");
 
-		System.out.println(cadastroCozinha.atualizar(cozinha).getNome());
+		System.out.println(repository.salvar(cozinha).getNome());
 
 	}
 
