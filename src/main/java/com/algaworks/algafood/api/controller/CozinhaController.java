@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algaworks.algafood.api.model.CozinhaXmlWrapper;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
+import com.algaworks.algafood.domain.service.CadastroCozinhaService;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @RestController
@@ -26,6 +28,9 @@ public class CozinhaController {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	private CadastroCozinhaService cadastroCozinha;
 
 	@GetMapping
 	public List<Cozinha> listar() {
@@ -50,7 +55,7 @@ public class CozinhaController {
 	@PostMapping()
 	public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha dataCozinha) {
 
-		Cozinha cozinha = cozinhaRepository.salvar(dataCozinha);
+		Cozinha cozinha = cadastroCozinha.salvar(dataCozinha);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(cozinha);
 
@@ -62,11 +67,22 @@ public class CozinhaController {
 		Cozinha cozinha = cozinhaRepository.buscar(id);
 
 //		cozinha.setNome(dataCozinha.getNome()); 
-		BeanUtils.copyProperties(dataCozinha, cozinha, "id"); //string ignorando propriedade
+		BeanUtils.copyProperties(dataCozinha, cozinha, "id"); //string ignorando propriedade	
 		
 		cozinha = cozinhaRepository.salvar(cozinha);
 
 		return ResponseEntity.ok(cozinha);
+
+	}
+	
+	@DeleteMapping(value = "/ {id}")
+	public ResponseEntity<Cozinha> remover(@PathVariable Long id) {
+
+		Cozinha cozinha = cozinhaRepository.buscar(id);
+		
+		cozinhaRepository.deletar(cozinha.getId());
+
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build() ;
 
 	}
 
