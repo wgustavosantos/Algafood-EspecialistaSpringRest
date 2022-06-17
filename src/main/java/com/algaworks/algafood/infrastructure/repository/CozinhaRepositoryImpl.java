@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,7 @@ import com.algaworks.algafood.domain.repository.CozinhaRepository;
 
 @Component
 public class CozinhaRepositoryImpl implements CozinhaRepository {
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -35,7 +36,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 	@Transactional
 	@Override
 	public Cozinha salvar(Cozinha cozinha) {
-		
+
 		return entityManager.merge(cozinha);
 	}
 
@@ -45,8 +46,12 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
 		Cozinha cozinha = buscar(id);
 
+		if (cozinha == null) {
+			throw new EmptyResultDataAccessException(1);
+		}
+
 		entityManager.remove(cozinha);
-		
+
 	}
 
 }
