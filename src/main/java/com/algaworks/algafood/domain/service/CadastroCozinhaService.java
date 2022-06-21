@@ -1,6 +1,5 @@
 package com.algaworks.algafood.domain.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ public class CadastroCozinhaService {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
-
-	List<String> palavras = new ArrayList<>();
 
 	public Cozinha salvar(Cozinha cozinha) {
 
@@ -51,7 +48,7 @@ public class CadastroCozinhaService {
 		try {
 			cozinha = cozinhaRepository.buscar(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Id: %d - Coziznha não encontrada", id));
+			throw new EntidadeNaoEncontradaException(String.format("Id: %d - Cozinha não encontrada", id));
 		}
 		return cozinha;
 	}
