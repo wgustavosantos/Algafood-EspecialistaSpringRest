@@ -30,7 +30,13 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
 	@Override
 	public Cozinha buscar(Long id) {
-		return entityManager.find(Cozinha.class, id);
+
+		Cozinha cozinha = entityManager.find(Cozinha.class, id);
+
+		if (cozinha == null) {
+			throw new EmptyResultDataAccessException(1);
+		}
+		return cozinha;
 	}
 
 	@Transactional

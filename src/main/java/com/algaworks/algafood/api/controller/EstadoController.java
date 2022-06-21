@@ -13,15 +13,15 @@ import com.algaworks.algafood.domain.repository.EstadoRepository;
 @RestController
 @RequestMapping(value = "estados")
 public class EstadoController {
-	
+
 	@Autowired
 	private EstadoRepository estadoRepository;
-	
+
 	@GetMapping
-	public List<Estado> estados (){
-		
+	public List<Estado> estados() {
+
 		return estadoRepository.listar();
-		
+
 	}
-	
+
 }
