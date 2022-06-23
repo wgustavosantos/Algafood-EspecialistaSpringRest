@@ -41,8 +41,13 @@ public class CadastroRestauranteService {
 
 	public Restaurante salvar(Restaurante restaurante) {
 
-		Cozinha cozinha = cadastroCozinhaService.buscar(restaurante.getCozinha().getId());
+		Cozinha cozinha ;
 		
+		try {
+			cozinha = cadastroCozinhaService.buscar(restaurante.getCozinha().getId());
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new EntidadeNaoEncontradaException(String.format("Cozinha id: %d - Cozinha não encontrada",restaurante.getCozinha().getId()));
+		}
 		restaurante.setCozinha(cozinha);
 
 		return restauranteRepository.salvar(restaurante);
@@ -54,7 +59,6 @@ public class CadastroRestauranteService {
 		Restaurante restaurante;
 		try {
 			restaurante = restauranteRepository.buscar(id);
-			System.out.println("Buscou e efetuou o delete");
 			restauranteRepository.deletar(restaurante.getId());
 
 		} catch (EmptyResultDataAccessException e) {
