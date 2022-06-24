@@ -2,10 +2,13 @@ package com.algaworks.algafood.domain.model;
 
 import java.util.Objects;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class Cidade {
 
 	@Id
@@ -13,13 +16,17 @@ public class Cidade {
 	private Long id;
 
 	private String nome;
+	
+	@ManyToOne
+	private Estado estado;
 
 	public Cidade() {
 	}
 
-	public Cidade(Long id, String nome) {
+	public Cidade(Long id, String nome, Estado estado) {
 		this.id = id;
 		this.nome = nome;
+		this.estado = estado;
 	}
 
 	public Long getId() {
@@ -36,6 +43,14 @@ public class Cidade {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Estado getEstado() {
+		return estado;
+	}
+
+	public void setEstado(Estado estado) {
+		this.estado = estado;
 	}
 
 	@Override

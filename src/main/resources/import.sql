@@ -9,3 +9,8 @@ insert into restaurante (nome, taxa_frete, cozinha_id) values ('Tuk Tuk Comida I
 insert into estado (nome) values ('PA');
 insert into estado (nome) values ('AM');
 insert into estado (nome) values ('SP');
+
+insert into cidade (nome, estado_id) values ('Bragança', 1);
+insert into cidade (nome, estado_id) values ('Manaus', 2);
+insert into cidade (nome, estado_id) values ('São Paulo', 3);
+insert into cidade (nome) values ('Olinda');

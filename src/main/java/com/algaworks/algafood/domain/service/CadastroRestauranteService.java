@@ -41,7 +41,7 @@ public class CadastroRestauranteService {
 
 	public Restaurante salvar(Restaurante restaurante) {
 
-		Cozinha cozinha ;
+		Cozinha cozinha;
 		
 		try {
 			cozinha = cadastroCozinhaService.buscar(restaurante.getCozinha().getId());
