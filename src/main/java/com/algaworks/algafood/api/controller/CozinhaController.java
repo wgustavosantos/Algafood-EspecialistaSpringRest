@@ -1,4 +1,4 @@
-package com.algaworks.algafood.api.controller;
+ package com.algaworks.algafood.api.controller;
 
 import java.util.List;
 
@@ -36,7 +36,10 @@ public class CozinhaController {
 	public ResponseEntity<Cozinha> buscar(@PathVariable Long id) {
 
 		Cozinha cozinha = cadastroCozinha.buscar(id);
-
+		
+		if(cozinha == null) {
+			return ResponseEntity.notFound().build();
+		}
 		return ResponseEntity.ok(cozinha);
 	}
 
