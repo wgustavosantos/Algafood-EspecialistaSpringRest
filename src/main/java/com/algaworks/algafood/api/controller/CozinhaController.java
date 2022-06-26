@@ -1,4 +1,4 @@
- package com.algaworks.algafood.api.controller;
+package com.algaworks.algafood.api.controller;
 
 import java.util.List;
 
@@ -33,14 +33,15 @@ public class CozinhaController {
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Cozinha> buscar(@PathVariable Long id) {
+	public ResponseEntity<?> buscar(@PathVariable Long id) {
 
-		Cozinha cozinha = cadastroCozinha.buscar(id);
-		
-		if(cozinha == null) {
-			return ResponseEntity.notFound().build();
+		try {
+			Cozinha cozinha = cadastroCozinha.buscar(id);
+			return ResponseEntity.ok(cozinha);
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
-		return ResponseEntity.ok(cozinha);
+
 	}
 
 	@PostMapping()
@@ -53,9 +54,14 @@ public class CozinhaController {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Cozinha> atualizar(@RequestBody Cozinha dataCozinha, @PathVariable Long id) {
+	public ResponseEntity<?> atualizar(@RequestBody Cozinha dataCozinha, @PathVariable Long id) {
 
-		Cozinha cozinha = cadastroCozinha.buscar(id);
+		Cozinha cozinha;
+		try {
+			cozinha = cadastroCozinha.buscar(id);
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
 
 //		cozinha.setNome(dataCozinha.getNome()); 
 		BeanUtils.copyProperties(dataCozinha, cozinha, "id"); // string ignorando propriedade
@@ -67,17 +73,16 @@ public class CozinhaController {
 	}
 
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Cozinha> remover(@PathVariable Long id) {
+	public ResponseEntity<?> remover(@PathVariable Long id) {
 
 		try {
 			cadastroCozinha.excluir(id);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
-
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
 	}
 

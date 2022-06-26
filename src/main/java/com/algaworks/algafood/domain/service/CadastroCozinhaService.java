@@ -28,11 +28,8 @@ public class CadastroCozinhaService {
 
 		Optional<Cozinha> cozinha = cozinhaRepository.findById(id);
 
-		if (cozinha.isPresent()) {
-			return cozinha.get();
-		} else {
-			return null;
-		}
+		return cozinha.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cozinha id: %d não encontrada", id)));
 
 	}
 
@@ -46,11 +43,10 @@ public class CadastroCozinhaService {
 		try {
 			cozinhaRepository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Id: %d - Cozinha não encontrada", id));
+			throw new EntidadeNaoEncontradaException(String.format("Cozinha id: %d não encontrada", id));
 		} catch (DataIntegrityViolationException e) {
-			// TODO: handle exception
 			throw new EntidadeEmUsoException(
-					String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));
+					String.format("Cozinha id: %d está em uso", id));
 		}
 	}
 

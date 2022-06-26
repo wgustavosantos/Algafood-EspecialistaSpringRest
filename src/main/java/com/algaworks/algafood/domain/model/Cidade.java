@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -9,7 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Cidade {
+public class Cidade implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8966908318232167831L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
