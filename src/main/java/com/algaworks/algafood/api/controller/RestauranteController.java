@@ -34,33 +34,15 @@ public class RestauranteController {
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
-
-		Restaurante restaurante;
+	public ResponseEntity<?> buscar(@PathVariable Long id) {
 
 		try {
-			restaurante = restauranteService.buscar(id);
+			Restaurante restaurante = restauranteService.buscar(id);
+			return ResponseEntity.ok(restaurante);
+
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
-
-		return ResponseEntity.ok(restaurante);
-
-	}
-
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Restaurante> deletar(@PathVariable Long id) {
-
-		try {
-			restauranteService.deletar(id);
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		}
-
-		return ResponseEntity.noContent().build();
-
 	}
 
 	@PostMapping
@@ -68,11 +50,26 @@ public class RestauranteController {
 
 		try {
 			restaurante = restauranteService.salvar(restaurante);
-
 			return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
+	}
+
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<?> deletar(@PathVariable Long id) {
+
+		try {
+			restauranteService.deletar(id);
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (EntidadeEmUsoException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+		}
+
+		return ResponseEntity.noContent().build();
+
 	}
 
 	@PutMapping(value = "/{id}")
