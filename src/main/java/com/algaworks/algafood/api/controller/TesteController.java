@@ -25,17 +25,24 @@ public class TesteController {
 
 	}
 	
-	@GetMapping(value = "/restaurante/por-nome-e-taxa")
-	public List<Restaurante> restaurantePorNomeAndTaxa(String nome, BigDecimal taxaInicial, BigDecimal taxaFinal) {
-
-		return restauranteRepository.findByNomeContainingAndTaxaFreteBetween(nome, taxaInicial, taxaFinal);
-
-	}
+//	@GetMapping(value = "/restaurante/por-nome-e-taxa")
+//	public List<Restaurante> restaurantePorNomeAndTaxa(String nome, BigDecimal taxaInicial, BigDecimal taxaFinal) {
+//
+//		return restauranteRepository.findByNomeContainingAndTaxaFreteBetween(nome, taxaInicial, taxaFinal);
+//
+//	}
 	
 	@GetMapping(value = "/restaurante/por-nome-e-cozinha")
 	public List<Restaurante> restaurantePorNomeAndCozinhaId(String nome, Long cozinhaId) {
 
 		return restauranteRepository.consultarPorNome(nome, cozinhaId);
+
+	}
+	
+	@GetMapping(value = "/restaurante/por-nome-e-taxa")
+	public List<Restaurante> find(String nome, BigDecimal taxaInicial, BigDecimal taxaFinal) {
+
+		return restauranteRepository.find(nome, taxaInicial, taxaFinal);
 
 	}
 
