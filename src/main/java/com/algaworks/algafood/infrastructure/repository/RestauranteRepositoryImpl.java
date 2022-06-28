@@ -1,6 +1,7 @@
 package com.algaworks.algafood.infrastructure.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,9 +13,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepositoryQueries;
+
 
 /*
  * Sufixo Impl para o Sring identificar 
@@ -36,12 +39,27 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 		
 		Root<Restaurante> root = criteria.from(Restaurante.class); // from Restaurante, o root é o Restaurante
 		
-		Predicate nomePredicate = criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
+		var predicates = new ArrayList<Predicate>();
 		
-		Predicate taxaInicialPredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("taxaFrete"), taxaFreteInicial);
-		Predicate taxaFinalPredicate = criteriaBuilder.lessThanOrEqualTo(root.get("taxaFrete"), taxaFreteFinal);
+		if(StringUtils.hasText(nome)) {
+			Predicate nomePredicate = criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
+			predicates.add(nomePredicate);
+		}
 		
-		criteria.where(nomePredicate, taxaInicialPredicate, taxaFinalPredicate);
+		if(taxaFreteInicial != null) {
+			Predicate taxaInicialPredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("taxaFrete"),
+					taxaFreteInicial);
+			predicates.add(taxaInicialPredicate);
+		}
+		
+		if(taxaFreteFinal != null) {
+			Predicate taxaFinalPredicate = criteriaBuilder.lessThanOrEqualTo(root.get("taxaFrete"), taxaFreteFinal);
+			predicates.add(taxaFinalPredicate);
+		}
+		
+		
+		
+		criteria.where(predicates.toArray(new Predicate[0])); // separa por and // converte um arrayList para um List
 		
 		TypedQuery<Restaurante> query = entityManager.createQuery(criteria);
 
