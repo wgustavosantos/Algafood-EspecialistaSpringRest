@@ -1,6 +1,7 @@
 package com.algaworks.algafood.domain.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,39 +19,35 @@ public class CadastroCozinhaService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
+	public List<Cozinha> listar() {
+
+		return cozinhaRepository.findAll();
+	}
+
+	public Cozinha buscar(Long id) {
+
+		Optional<Cozinha> cozinha = cozinhaRepository.findById(id);
+
+		return cozinha.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cozinha id: %d não encontrada", id)));
+
+	}
+
 	public Cozinha salvar(Cozinha cozinha) {
 
-		return cozinhaRepository.salvar(cozinha);
+		return cozinhaRepository.save(cozinha);
 	}
 
 	public void excluir(Long id) {
 
 		try {
-			cozinhaRepository.deletar(id);
+			cozinhaRepository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Id: %d - Cozinha não encontrada", id));
+			throw new EntidadeNaoEncontradaException(String.format("Cozinha id: %d não encontrada", id));
 		} catch (DataIntegrityViolationException e) {
-			// TODO: handle exception
 			throw new EntidadeEmUsoException(
-					String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));
+					String.format("Cozinha id: %d está em uso", id));
 		}
-	}
-
-	public List<Cozinha> listar() {
-
-		return cozinhaRepository.listar();
-	}
-
-	public Cozinha buscar(Long id) {
-
-		Cozinha cozinha;
-
-		try {
-			cozinha = cozinhaRepository.buscar(id);
-		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Id: %d - Cozinha não encontrada", id));
-		}
-		return cozinha;
 	}
 
 }

@@ -1,59 +1,77 @@
 package com.algaworks.algafood.infrastructure.repository;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
+import com.algaworks.algafood.domain.repository.RestauranteRepositoryQueries;
 
-@Component
-public class RestauranteRepositoryImpl implements RestauranteRepository {
+/*
+ * Sufixo Impl para o Sring identificar 
+ * implementação customizada de um repositrio
+ */
+
+@Repository
+public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@Override
-	public List<Restaurante> listar() {
-		TypedQuery<Restaurante> query = entityManager.createQuery("from Restaurante", Restaurante.class);
-
-		List<Restaurante> lista = query.getResultList();
-
-		return lista;
-	}
+	@Autowired
+	@Lazy // referencia circular
+	private RestauranteRepository restauranteRepository;
 
 	@Override
-	public Restaurante buscar(Long id) {
-		
-		Restaurante restaurante = entityManager.find(Restaurante.class, id);
-		
-		if(restaurante == null) {
-			throw new EmptyResultDataAccessException(1);
+	public List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Restaurante> criteria = criteriaBuilder.createQuery(Restaurante.class);
+
+		Root<Restaurante> root = criteria.from(Restaurante.class); // from Restaurante, o root é o Restaurante
+
+		var predicates = new ArrayList<Predicate>();
+
+		if (StringUtils.hasText(nome)) {
+			Predicate nomePredicate = criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
+			predicates.add(nomePredicate);
 		}
-		return restaurante ;
+
+		if (taxaFreteInicial != null) {
+			Predicate taxaInicialPredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("taxaFrete"),
+					taxaFreteInicial);
+			predicates.add(taxaInicialPredicate);
+		}
+
+		if (taxaFreteFinal != null) {
+			Predicate taxaFinalPredicate = criteriaBuilder.lessThanOrEqualTo(root.get("taxaFrete"), taxaFreteFinal);
+			predicates.add(taxaFinalPredicate);
+		}
+
+		criteria.where(predicates.toArray(new Predicate[0])); // separa por and // converte um arrayList para um List
+
+		TypedQuery<Restaurante> query = entityManager.createQuery(criteria);
+
+		return query.getResultList();
 	}
 
-	@Transactional
 	@Override
-	public Restaurante salvar(Restaurante cozinha) {
-
-		return entityManager.merge(cozinha);
+	public List<Restaurante> findComFreteGratis(String nome) {
+		return restauranteRepository.findComFreteGratis(nome);
 	}
-
-	@Transactional
-	@Override
-	public void deletar(Long id) {
-
-		Restaurante cozinha = buscar(id);
-
-		entityManager.remove(cozinha);
-
-	}
-
 }

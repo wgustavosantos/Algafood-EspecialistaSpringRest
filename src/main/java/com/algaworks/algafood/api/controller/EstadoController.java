@@ -36,16 +36,15 @@ public class EstadoController {
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Estado> buscar(@PathVariable Long id) {
-
-		Estado estado;
+	public ResponseEntity<?> buscar(@PathVariable Long id) {
 
 		try {
-			estado = cadastroEstadoService.buscar(id);
+			Estado estado = cadastroEstadoService.buscar(id);
+			return ResponseEntity.ok(estado);
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
-		return ResponseEntity.ok(estado);
+
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -53,14 +52,12 @@ public class EstadoController {
 
 		try {
 			cadastroEstadoService.deletar(id);
+			return ResponseEntity.noContent().build();
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 		}
-
-		return ResponseEntity.noContent().build();
-
 	}
 
 	@PostMapping
@@ -75,19 +72,15 @@ public class EstadoController {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<?> atualizar(@RequestBody Estado estadoNovo, @PathVariable Long id) {
 
-		Estado estado;
 		try {
-			estado = cadastroEstadoService.buscar(id);
-
+			
+			Estado estado = cadastroEstadoService.buscar(id);
+			BeanUtils.copyProperties(estadoNovo, estado, "id");
+			estado = cadastroEstadoService.salvar(estado);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(estado);
 		} catch (EntidadeNaoEncontradaException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
-		BeanUtils.copyProperties(estadoNovo, estado, "id");
-		
-		estado = cadastroEstadoService.salvar(estado);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(estado);
-
 	}
-
 }
