@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.repository.RestauranteRepositoryQueries;
-import com.algaworks.algafood.infrastructure.repository.spec.RestauranteSpecs;
 
 /*
  * Sufixo Impl para o Sring identificar 
