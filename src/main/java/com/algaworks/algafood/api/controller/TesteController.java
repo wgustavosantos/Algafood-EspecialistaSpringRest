@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
-import com.algaworks.algafood.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
-import com.algaworks.algafood.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
+import com.algaworks.algafood.infrastructure.repository.spec.RestauranteSpecs;
 
 @RestController
 @RequestMapping(value = "/teste")
@@ -51,10 +50,9 @@ public class TesteController {
 	@GetMapping(value = "/restaurante/com-frete-gratis")
 	public List<Restaurante> restaurantesComFreteGratis(String nome, BigDecimal taxaInicial, BigDecimal taxaFinal) {
 
-		var comFreteGratis = new RestauranteComFreteGratisSpec();
-		var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
-
-		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
+		return restauranteRepository
+				.findAll(RestauranteSpecs.comFreteGratis()
+						.and(RestauranteSpecs.comNomeSemelhante(nome)));
 
 	}
 
